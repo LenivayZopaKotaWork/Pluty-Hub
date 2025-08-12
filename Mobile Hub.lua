@@ -21,7 +21,7 @@ getgenv().r3thexecuted = false
         Size = UDim2.fromOffset(500, 380),
         Acrylic = false, -- The blur may be detectable, setting this to false disables blur entirely
         Theme = "Dark",
-        MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
+        MinimizeKey = Enum.KeyCode.G -- Used when theres no MinimizeKeybind
     })
 
     --Fluent provides Lucide Icons https://lucide.dev/icons/ for the tabs, icons are optional
