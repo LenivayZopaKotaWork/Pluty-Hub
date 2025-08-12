@@ -18,7 +18,7 @@ getgenv().r3thexecuted = false
         Title = "Pluty Hub Mobile " .. Fluent.Version,
         SubTitle = "by Pluty",
         TabWidth = 160,
-        Size = UDim2.fromOffset(580, 460),
+        Size = UDim2.fromOffset(500, 380),
         Acrylic = false, -- The blur may be detectable, setting this to false disables blur entirely
         Theme = "Dark",
         MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
@@ -2884,98 +2884,93 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 
 
 
-		local Players = game:GetService("Players")
-		local LocalPlayer = Players.LocalPlayer
-		local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 		local UIS = game:GetService("UserInputService")
-		local VIM = game:GetService("VirtualInputManager")
-		local RunService = game:GetService("RunService")
+		local VirtualInputManager = game:GetService("VirtualInputManager")
+		local Players = game:GetService("Players")
 		
-		-- Настройки
-		local MENU_KEY = Enum.KeyCode.G -- Клавиша для открытия меню
+		local player = Players.LocalPlayer
+		local playerGui = player:WaitForChild("PlayerGui")
 		
-		-- GUI
-		local gui = Instance.new("ScreenGui")
-		gui.Name = "MobileMenuButton"
-		gui.ResetOnSpawn = false
-		gui.IgnoreGuiInset = true
-		gui.Parent = PlayerGui
+		-- === Создаём GUI ===
+		local ScreenGui = Instance.new("ScreenGui")
+		ScreenGui.Name = "MobileMenuButton"
+		ScreenGui.Parent = playerGui
+		ScreenGui.IgnoreGuiInset = true
+		ScreenGui.ResetOnSpawn = false
 		
-		local btn = Instance.new("TextButton")
-		btn.Size = UDim2.new(0, 64, 0, 64)
-		btn.Text = "≡"
-		btn.TextSize = 30
-		btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-		btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-		btn.Parent = gui
-		btn.Active = true
-		btn.Draggable = false
+		local ImageButton = Instance.new("ImageButton")
+		ImageButton.Size = UDim2.new(0, 80, 0, 80)
+		ImageButton.AnchorPoint = Vector2.new(0.5, 0.5)
+		ImageButton.Position = UDim2.new(0.5, 0, 0.5, 0) -- По центру
+		ImageButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+		ImageButton.Image = "" -- можно вставить иконку
+		ImageButton.Parent = ScreenGui
 		
-		-- Функция установки в центр
-		local function centerButton()
-		    local screenSize = workspace.CurrentCamera.ViewportSize
-		    local centerX = (screenSize.X / 2) - (btn.AbsoluteSize.X / 2)
-		    local centerY = (screenSize.Y / 2) - (btn.AbsoluteSize.Y / 2)
-		    btn.Position = UDim2.new(0, centerX, 0, centerY)
+		-- Если хотим скрывать на ПК — можно раскомментировать:
+		-- if not UIS.TouchEnabled then ImageButton.Visible = false end
+		
+		-- === Ограничение, чтобы кнопка не вылазила за экран ===
+		local function adjustButtonPosition()
+		    local screenWidth = ScreenGui.AbsoluteSize.X
+		    local screenHeight = ScreenGui.AbsoluteSize.Y
+		    local buttonWidth = ImageButton.Size.X.Offset
+		    local buttonHeight = ImageButton.Size.Y.Offset
+		
+		    local posX = math.clamp(ImageButton.Position.X.Offset, 0, screenWidth - buttonWidth)
+		    local posY = math.clamp(ImageButton.Position.Y.Offset, 0, screenHeight - buttonHeight)
+		
+		    ImageButton.Position = UDim2.new(0, posX, 0, posY)
 		end
 		
-		-- При первом появлении — центр
-		RunService.RenderStepped:Wait()
-		centerButton()
+		ScreenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(adjustButtonPosition)
+		adjustButtonPosition()
 		
-		-- Ограничение по экрану
-		local function clampPosition(pos)
-		    local screenSize = workspace.CurrentCamera.ViewportSize
-		    local x = math.clamp(pos.X.Offset, 0, screenSize.X - btn.AbsoluteSize.X)
-		    local y = math.clamp(pos.Y.Offset, 0, screenSize.Y - btn.AbsoluteSize.Y)
-		    return UDim2.new(0, x, 0, y)
-		end
-		
-		-- Клик — эмуляция нажатия клавиши
-		btn.MouseButton1Click:Connect(function()
-		    VIM:SendKeyEvent(true, MENU_KEY, false, game)
+		-- === При клике эмулируем G ===
+		local function pressKey(keyCode)
+		    VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
 		    task.wait(0.05)
-		    VIM:SendKeyEvent(false, MENU_KEY, false, game)
+		    VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
+		end
+		
+		ImageButton.MouseButton1Click:Connect(function()
+		    pressKey(Enum.KeyCode.G)
 		end)
 		
-		-- Перетаскивание
+		-- === Перетаскивание ===
 		local dragging = false
-		local dragStart
-		local startPos
+		local dragInput, dragStart, startPos
 		
-		local function update(input)
-		    local delta = input.Position - dragStart
-		    local newPos = UDim2.new(
-		        startPos.X.Scale,
-		        startPos.X.Offset + delta.X,
-		        startPos.Y.Scale,
-		        startPos.Y.Offset + delta.Y
-		    )
-		    btn.Position = clampPosition(newPos)
-		end
-		
-		btn.InputBegan:Connect(function(input)
+		ImageButton.InputBegan:Connect(function(input)
 		    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 		        dragging = true
 		        dragStart = input.Position
-		        startPos = btn.Position
+		        startPos = ImageButton.Position
 		
 		        input.Changed:Connect(function()
 		            if input.UserInputState == Enum.UserInputState.End then
 		                dragging = false
+		                adjustButtonPosition()
 		            end
 		        end)
 		    end
 		end)
 		
-		UIS.InputChanged:Connect(function(input)
-		    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-		        update(input)
+		ImageButton.InputChanged:Connect(function(input)
+		    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		        dragInput = input
 		    end
 		end)
-
-
-
-
+		
+		UIS.InputChanged:Connect(function(input)
+		    if input == dragInput and dragging then
+		        local delta = input.Position - dragStart
+		        ImageButton.Position = UDim2.new(
+		            startPos.X.Scale,
+		            startPos.X.Offset + delta.X,
+		            startPos.Y.Scale,
+		            startPos.Y.Offset + delta.Y
+		        )
+		    end
+		end)
 
 
