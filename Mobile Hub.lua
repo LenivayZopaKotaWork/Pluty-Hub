@@ -2884,86 +2884,88 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 
 
 
-		local Players = game:GetService("Players")
-		local LocalPlayer = Players.LocalPlayer
-		local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-		local UIS = game:GetService("UserInputService")
-		local VIM = game:GetService("VirtualInputManager")
-		
-		-- Настройки
-		local MENU_KEY = Enum.KeyCode.G -- Клавиша для открытия меню
-		
-		-- GUI
-		local gui = Instance.new("ScreenGui")
-		gui.Name = "MobileMenuButton"
-		gui.ResetOnSpawn = false
-		gui.IgnoreGuiInset = true -- чтобы не сдвигалось из-за верхней панели на телефоне
-		gui.Parent = PlayerGui
-		
-		local btn = Instance.new("TextButton")
-		btn.Size = UDim2.new(0, 64, 0, 64)
-		
-		-- Стартовая позиция внизу справа
-		btn.Position = UDim2.new(1, -80, 1, -80)
-		
-		btn.Text = "≡"
-		btn.TextSize = 30
-		btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-		btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-		btn.Parent = gui
-		btn.Active = true
-		btn.Draggable = false -- перетаскивание вручную
-		
-		-- Функция, чтобы не выходить за экран
-		local function clampPosition(pos)
-		    local screenSize = workspace.CurrentCamera.ViewportSize
-		    local x = math.clamp(pos.X.Offset, 0, screenSize.X - btn.AbsoluteSize.X)
-		    local y = math.clamp(pos.Y.Offset, 0, screenSize.Y - btn.AbsoluteSize.Y)
-		    return UDim2.new(0, x, 0, y)
-		end
-		
-		-- Клик — эмуляция нажатия кнопки
-		btn.MouseButton1Click:Connect(function()
-		    VIM:SendKeyEvent(true, MENU_KEY, false, game)
-		    task.wait(0.05)
-		    VIM:SendKeyEvent(false, MENU_KEY, false, game)
-		end)
-		
-		-- Перетаскивание
-		local dragging = false
-		local dragStart
-		local startPos
-		
-		local function update(input)
-		    local delta = input.Position - dragStart
-		    local newPos = UDim2.new(
-		        startPos.X.Scale,
-		        startPos.X.Offset + delta.X,
-		        startPos.Y.Scale,
-		        startPos.Y.Offset + delta.Y
-		    )
-		    btn.Position = clampPosition(newPos)
-		end
-		
-		btn.InputBegan:Connect(function(input)
-		    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		        dragging = true
-		        dragStart = input.Position
-		        startPos = btn.Position
-		
-		        input.Changed:Connect(function()
-		            if input.UserInputState == Enum.UserInputState.End then
-		                dragging = false
-		            end
-		        end)
-		    end
-		end)
-		
-		UIS.InputChanged:Connect(function(input)
-		    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-		        update(input)
-		    end
-		end)
+	local Players = game:GetService("Players")
+	local LocalPlayer = Players.LocalPlayer
+	local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+	local UIS = game:GetService("UserInputService")
+	local VIM = game:GetService("VirtualInputManager")
+	
+	-- Настройки
+	local MENU_KEY = Enum.KeyCode.G -- Клавиша для открытия меню
+	
+	-- GUI
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "MobileMenuButton"
+	gui.ResetOnSpawn = false
+	gui.IgnoreGuiInset = true
+	gui.Parent = PlayerGui
+	
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0, 64, 0, 64)
+	
+	-- Центр экрана
+	btn.AnchorPoint = Vector2.new(0.5, 0.5)
+	btn.Position = UDim2.new(0.5, 0, 0.5, 0)
+	
+	btn.Text = "≡"
+	btn.TextSize = 30
+	btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	btn.Parent = gui
+	btn.Active = true
+	btn.Draggable = false
+	
+	-- Ограничение по экрану
+	local function clampPosition(pos)
+	    local screenSize = workspace.CurrentCamera.ViewportSize
+	    local x = math.clamp(pos.X.Offset, 0, screenSize.X - btn.AbsoluteSize.X)
+	    local y = math.clamp(pos.Y.Offset, 0, screenSize.Y - btn.AbsoluteSize.Y)
+	    return UDim2.new(0, x, 0, y)
+	end
+	
+	-- Клик — эмуляция нажатия клавиши
+	btn.MouseButton1Click:Connect(function()
+	    VIM:SendKeyEvent(true, MENU_KEY, false, game)
+	    task.wait(0.05)
+	    VIM:SendKeyEvent(false, MENU_KEY, false, game)
+	end)
+	
+	-- Перетаскивание
+	local dragging = false
+	local dragStart
+	local startPos
+	
+	local function update(input)
+	    local delta = input.Position - dragStart
+	    local newPos = UDim2.new(
+	        startPos.X.Scale,
+	        startPos.X.Offset + delta.X,
+	        startPos.Y.Scale,
+	        startPos.Y.Offset + delta.Y
+	    )
+	    btn.Position = clampPosition(newPos)
+	end
+	
+	btn.InputBegan:Connect(function(input)
+	    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+	        dragging = true
+	        dragStart = input.Position
+	        startPos = btn.Position
+	
+	        input.Changed:Connect(function()
+	            if input.UserInputState == Enum.UserInputState.End then
+	                dragging = false
+	            end
+	        end)
+	    end
+	end)
+	
+	UIS.InputChanged:Connect(function(input)
+	    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+	        update(input)
+	    end
+	end)
+
 
 
 
