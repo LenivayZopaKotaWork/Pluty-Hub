@@ -2886,13 +2886,18 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 
 	local Players = game:GetService("Players")
 	local LocalPlayer = Players.LocalPlayer
+	local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+	local UIS = game:GetService("UserInputService")
 	local VIM = game:GetService("VirtualInputManager")
 	
-	-- Создаём GUI
-	local playerGui = LocalPlayer:WaitForChild("PlayerGui")
+	-- Настройки
+	local MENU_KEY = Enum.KeyCode.G -- тут меняй на нужную кнопку
+	
+	-- GUI
 	local gui = Instance.new("ScreenGui")
+	gui.Name = "MobileMenuButton"
 	gui.ResetOnSpawn = false
-	gui.Parent = playerGui
+	gui.Parent = PlayerGui
 	
 	local btn = Instance.new("TextButton")
 	btn.Size = UDim2.new(0, 64, 0, 64)
@@ -2902,27 +2907,38 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 	btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
 	btn.Parent = gui
+	btn.Active = true
+	btn.Draggable = false -- мы сами реализуем перетаскивание
 	
-	-- При нажатии эмулируем LeftControl
+	-- Открытие/закрытие меню
 	btn.MouseButton1Click:Connect(function()
-	    VIM:SendKeyEvent(true, Enum.KeyCode.LeftControl, false, game)
+	    -- Эмуляция нажатия
+	    VIM:SendKeyEvent(true, MENU_KEY, false, game)
 	    task.wait(0.05)
-	    VIM:SendKeyEvent(false, Enum.KeyCode.LeftControl, false, game)
+	    VIM:SendKeyEvent(false, MENU_KEY, false, game)
 	end)
 	
-	-- Перетаскивание
-	local UIS = game:GetService("UserInputService")
-	local dragging, dragStart, startPos
+	-- Перетаскивание (тач и мышь)
+	local dragging = false
+	local dragStart
+	local startPos
+	
 	local function update(input)
 	    local delta = input.Position - dragStart
-	    btn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	    btn.Position = UDim2.new(
+	        startPos.X.Scale,
+	        startPos.X.Offset + delta.X,
+	        startPos.Y.Scale,
+	        startPos.Y.Offset + delta.Y
+	    )
 	end
 	
 	btn.InputBegan:Connect(function(input)
-	    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+	    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 	        dragging = true
 	        dragStart = input.Position
 	        startPos = btn.Position
+	
 	        input.Changed:Connect(function()
 	            if input.UserInputState == Enum.UserInputState.End then
 	                dragging = false
@@ -2932,9 +2948,10 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 	end)
 	
 	UIS.InputChanged:Connect(function(input)
-	    if dragging and (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) then
+	    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
 	        update(input)
 	    end
 	end)
+
 
 
