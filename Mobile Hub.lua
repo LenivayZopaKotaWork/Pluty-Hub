@@ -2883,71 +2883,58 @@ SaveManager:BuildConfigSection(Tabs.Settings)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/Pluty-Hub/refs/heads/main/qwerty.lua"))()
 
 
--- Добавляем мобильную кнопку для открытия меню
-local UIS = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-local VIM = game:GetService("VirtualInputManager")
-local LocalPlayer = Players.LocalPlayer
 
--- Только для тач-устройств
-if UIS.TouchEnabled then
-    task.spawn(function()
-        -- Ждём пока InterfaceManager проинициализируется
-        repeat task.wait() until InterfaceManager and InterfaceManager.Settings and InterfaceManager.Settings.MenuKeybind
+	local Players = game:GetService("Players")
+	local LocalPlayer = Players.LocalPlayer
+	local VIM = game:GetService("VirtualInputManager")
+	
+	-- Создаём GUI
+	local playerGui = LocalPlayer:WaitForChild("PlayerGui")
+	local gui = Instance.new("ScreenGui")
+	gui.ResetOnSpawn = false
+	gui.Parent = playerGui
+	
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0, 64, 0, 64)
+	btn.Position = UDim2.new(0, 12, 0, 12)
+	btn.Text = "≡"
+	btn.TextSize = 30
+	btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	btn.Parent = gui
+	
+	-- При нажатии эмулируем LeftControl
+	btn.MouseButton1Click:Connect(function()
+	    VIM:SendKeyEvent(true, Enum.KeyCode.LeftControl, false, game)
+	    task.wait(0.05)
+	    VIM:SendKeyEvent(false, Enum.KeyCode.LeftControl, false, game)
+	end)
+	
+	-- Перетаскивание
+	local UIS = game:GetService("UserInputService")
+	local dragging, dragStart, startPos
+	local function update(input)
+	    local delta = input.Position - dragStart
+	    btn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+	
+	btn.InputBegan:Connect(function(input)
+	    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+	        dragging = true
+	        dragStart = input.Position
+	        startPos = btn.Position
+	        input.Changed:Connect(function()
+	            if input.UserInputState == Enum.UserInputState.End then
+	                dragging = false
+	            end
+	        end)
+	    end
+	end)
+	
+	UIS.InputChanged:Connect(function(input)
+	    if dragging and (input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement) then
+	        update(input)
+	    end
+	end)
 
-        local keyName = InterfaceManager.Settings.MenuKeybind
-        local keyEnum = Enum.KeyCode[keyName] or (Enum.KeyCode[string.upper(keyName)] or Enum.KeyCode.LeftControl)
-
-        local playerGui = LocalPlayer:WaitForChild("PlayerGui")
-        local gui = Instance.new("ScreenGui")
-        gui.ResetOnSpawn = false
-        gui.Parent = playerGui
-
-        local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(0, 64, 0, 64)
-        btn.Position = UDim2.new(0, 12, 0, 12)
-        btn.Text = "≡"
-        btn.TextSize = 30
-        btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        btn.Parent = gui
-
-        btn.MouseButton1Click:Connect(function()
-            -- Нажатие бинд-клавиши
-            pcall(function()
-                VIM:SendKeyEvent(true, keyEnum, false, game)
-                task.wait(0.05)
-                VIM:SendKeyEvent(false, keyEnum, false, game)
-            end)
-        end)
-
-        -- Делаем перетаскиваемой
-        local dragging, dragInput, dragStart, startPos
-        local function update(input)
-            local delta = input.Position - dragStart
-            btn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        end
-
-        btn.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.Touch then
-                dragging = true
-                dragStart = input.Position
-                startPos = btn.Position
-                input.Changed:Connect(function()
-                    if input.UserInputState == Enum.UserInputState.End then
-                        dragging = false
-                    end
-                end)
-            end
-        end)
-
-        UIS.InputChanged:Connect(function(input)
-            if dragging and input.UserInputType == Enum.UserInputType.Touch then
-                update(input)
-            end
-        end)
-
-        print("[MobileUI] Кнопка меню загружена")
-    end)
-end
 
