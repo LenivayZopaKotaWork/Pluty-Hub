@@ -21,7 +21,7 @@ getgenv().r3thexecuted = false
         Size = UDim2.fromOffset(500, 380),
         Acrylic = false, -- The blur may be detectable, setting this to false disables blur entirely
         Theme = "Dark",
-        MinimizeKey = Enum.KeyCode.G -- Used when theres no MinimizeKeybind
+        MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
     })
 
     --Fluent provides Lucide Icons https://lucide.dev/icons/ for the tabs, icons are optional
@@ -2925,7 +2925,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 		ScreenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(adjustButtonPosition)
 		adjustButtonPosition()
 		
-		-- === При клике эмулируем G ===
+		-- === При клике эмулируем LeftControl ===
 		local function pressKey(keyCode)
 		    VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
 		    task.wait(0.05)
@@ -2933,7 +2933,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 		end
 		
 		ImageButton.MouseButton1Click:Connect(function()
-		    pressKey(Enum.KeyCode.G)
+		    pressKey(Enum.KeyCode.LeftControl)
 		end)
 		
 		-- === Перетаскивание ===
