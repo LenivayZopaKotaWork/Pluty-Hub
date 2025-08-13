@@ -2976,108 +2976,210 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 
 
 			----Button
-					local UIS = game:GetService("UserInputService")
-			local VirtualInputManager = game:GetService("VirtualInputManager")
-			local Players = game:GetService("Players")
-			
-			local player = Players.LocalPlayer
-			local playerGui = player:WaitForChild("PlayerGui")
-			
-			-- === Создаём GUI ===
-			local ScreenGui = Instance.new("ScreenGui")
-			ScreenGui.Name = "MobileSilentAimButton"
-			ScreenGui.Parent = playerGui
-			ScreenGui.IgnoreGuiInset = true
-			ScreenGui.ResetOnSpawn = false
-			
-			-- Кнопка
-			local ImageButton = Instance.new("ImageButton")
-			ImageButton.Size = UDim2.new(0, 70, 0, 70) -- чуть меньше, чем меню
-			ImageButton.AnchorPoint = Vector2.new(1, 1) 
-			ImageButton.Position = UDim2.new(1, -20, 1, -200) -- внизу справа, но выше кнопки меню
-			ImageButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50) -- красный оттенок
-			ImageButton.BackgroundTransparency = 0.2
-			ImageButton.BorderSizePixel = 0
-			ImageButton.AutoButtonColor = true
-			ImageButton.Image = "rbxassetid://6764432401" -- иконка прицела
-			ImageButton.ImageColor3 = Color3.fromRGB(255, 255, 255)
-			ImageButton.Parent = ScreenGui
-			ImageButton.Visible = UIS.TouchEnabled -- скрываем на ПК
-			
-			-- Закругление
-			local corner = Instance.new("UICorner")
-			corner.CornerRadius = UDim.new(1, 0)
-			corner.Parent = ImageButton
-			
-			-- Тень под кнопкой
-			local shadow = Instance.new("UIStroke")
-			shadow.Thickness = 2
-			shadow.Color = Color3.fromRGB(0, 0, 0)
-			shadow.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-			shadow.Parent = ImageButton
-			
-			-- === Ограничение, чтобы кнопка не вылазила за экран ===
-			local function adjustButtonPosition()
-			    local screenWidth = ScreenGui.AbsoluteSize.X
-			    local screenHeight = ScreenGui.AbsoluteSize.Y
-			    local buttonWidth = ImageButton.Size.X.Offset
-			    local buttonHeight = ImageButton.Size.Y.Offset
-			
-			    local posX = math.clamp(ImageButton.Position.X.Offset, 0, screenWidth - buttonWidth)
-			    local posY = math.clamp(ImageButton.Position.Y.Offset, 0, screenHeight - buttonHeight)
-			
-			    ImageButton.Position = UDim2.new(0, posX, 0, posY)
-			end
-			
-			ScreenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(adjustButtonPosition)
-			adjustButtonPosition()
-			
-			-- === При клике эмулируем клавишу R ===
-			local function pressKey(keyCode)
-			    VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
-			    task.wait(0.05)
-			    VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
-			end
-			
-			ImageButton.MouseButton1Click:Connect(function()
-			    pressKey(Enum.KeyCode.R)
-			end)
-			
-			-- === Перетаскивание кнопки ===
-			local dragging = false
-			local dragInput, dragStart, startPos
-			
-			ImageButton.InputBegan:Connect(function(input)
-			    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			        dragging = true
-			        dragStart = input.Position
-			        startPos = ImageButton.Position
-			
-			        input.Changed:Connect(function()
-			            if input.UserInputState == Enum.UserInputState.End then
-			                dragging = false
-			                adjustButtonPosition()
-			            end
-			        end)
-			    end
-			end)
-			
-			ImageButton.InputChanged:Connect(function(input)
-			    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-			        dragInput = input
-			    end
-			end)
-			
-			UIS.InputChanged:Connect(function(input)
-			    if input == dragInput and dragging then
-			        local delta = input.Position - dragStart
-			        ImageButton.Position = UDim2.new(
-			            startPos.X.Scale,
-			            startPos.X.Offset + delta.X,
-			            startPos.Y.Scale,
-			            startPos.Y.Offset + delta.Y
-			        )
-			    end
-			end)
+					-- === MOBILE SILENT AIM SHOT BUTTON (перед "-- End of script") ===
+		do
+		    local UIS = game:GetService("UserInputService")
+		    local VIM = game:GetService("VirtualInputManager")
+		    local Players = game:GetService("Players")
+		
+		    local LocalPlayer = Players.LocalPlayer
+		    local playerGui = LocalPlayer:WaitForChild("PlayerGui")
+		
+		    -- держим ссылку, чтобы не дублировалась
+		    local ShotGui -- ScreenGui
+		    local ShotBtn -- ImageButton
+		
+		    local function isSilentAimEnabled()
+		        -- читаем текущее значение твоего Toggle, как ты делал в InputBegan
+		        local ok, v = pcall(function()
+		            if uiToggle then
+		                if uiToggle.GetState then return uiToggle:GetState() end
+		                if uiToggle.GetValue then return uiToggle:GetValue() end
+		                if uiToggle.Value ~= nil then return uiToggle.Value end
+		            end
+		            if Options and Options.SilentAimToggle and Options.SilentAimToggle.Value ~= nil then
+		                return Options.SilentAimToggle.Value
+		            end
+		            return false
+		        end)
+		        return ok and v or false
+		    end
+		
+		    local function pressConfiguredKeyOrShoot()
+		        -- если есть валидный KeyBind-код клавиши — жмём его, иначе просто шмонаем выстрел напрямую
+		        local code = Enum.KeyCode.R
+		        local isKey = true
+		
+		        if type(configuredInput) == "table" and configuredInput.Code then
+		            if configuredInput.Type == "Key" and typeof(configuredInput.Code) == "EnumItem" then
+		                code = configuredInput.Code
+		                isKey = true
+		            elseif configuredInput.Type == "Mouse" then
+		                isKey = false
+		            end
+		        end
+		
+		        if isKey then
+		            -- Эмулируем KeyDown/KeyUp
+		            VIM:SendKeyEvent(true,  code, false, game)
+		            task.wait(0.05)
+		            VIM:SendKeyEvent(false, code, false, game)
+		        else
+		            -- Если bind — мышь, на мобиле это неудобно, просто шотнем напрямую
+		            pcall(function()
+		                SilentShootOnceFast()
+		            end)
+		        end
+		    end
+		
+		    local function adjustButtonPosition()
+		        if not ShotGui or not ShotBtn then return end
+		        local screenW = ShotGui.AbsoluteSize.X
+		        local screenH = ShotGui.AbsoluteSize.Y
+		        local bw = ShotBtn.Size.X.Offset
+		        local bh = ShotBtn.Size.Y.Offset
+		        local x = math.clamp(ShotBtn.Position.X.Offset, 0, screenW - bw)
+		        local y = math.clamp(ShotBtn.Position.Y.Offset, 0, screenH - bh)
+		        ShotBtn.Position = UDim2.new(0, x, 0, y)
+		    end
+		
+		    local function createShotButton()
+		        if ShotGui or not UIS.TouchEnabled then return end
+		        if not isSilentAimEnabled() then return end
+		
+		        ShotGui = Instance.new("ScreenGui")
+		        ShotGui.Name = "SilentAimShotButtonGui"
+		        ShotGui.IgnoreGuiInset = true
+		        ShotGui.ResetOnSpawn = false
+		        ShotGui.Parent = playerGui
+		
+		        ShotBtn = Instance.new("ImageButton")
+		        ShotBtn.Name = "SilentAimShot"
+		        ShotBtn.Size = UDim2.new(0, 72, 0, 72)
+		        ShotBtn.AnchorPoint = Vector2.new(1, 1)
+		        -- ставлю в правый нижний угол, НО повыше, чтобы не пересекаться с твоей кнопкой меню:
+		        ShotBtn.Position = UDim2.new(1, -22, 1, -200)
+		        ShotBtn.BackgroundColor3 = Color3.fromRGB(220, 60, 60) -- «красный прицел»
+		        ShotBtn.BackgroundTransparency = 0.15
+		        ShotBtn.BorderSizePixel = 0
+		        ShotBtn.AutoButtonColor = true
+		        ShotBtn.Image = "rbxassetid://6764432401" -- иконка прицела (можешь заменить)
+		        ShotBtn.ImageColor3 = Color3.fromRGB(255, 255, 255)
+		        ShotBtn.Parent = ShotGui
+		
+		        -- круглая и с аккуратной обводкой
+		        local corner = Instance.new("UICorner")
+		        corner.CornerRadius = UDim.new(1, 0)
+		        corner.Parent = ShotBtn
+		
+		        local stroke = Instance.new("UIStroke")
+		        stroke.Thickness = 2
+		        stroke.Color = Color3.fromRGB(25, 25, 25)
+		        stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+		        stroke.Parent = ShotBtn
+		
+		        -- маленький бейджик "SA"
+		        local tag = Instance.new("TextLabel")
+		        tag.BackgroundTransparency = 1
+		        tag.Size = UDim2.new(1, 0, 0, 16)
+		        tag.Position = UDim2.new(0, 0, 0, -2)
+		        tag.Text = "SA"
+		        tag.TextSize = 12
+		        tag.Font = Enum.Font.GothamBold
+		        tag.TextColor3 = Color3.fromRGB(255, 255, 255)
+		        tag.Parent = ShotBtn
+		
+		        -- клики
+		        ShotBtn.MouseButton1Down:Connect(function()
+		            ShotBtn.BackgroundColor3 = Color3.fromRGB(255, 90, 90)
+		        end)
+		        ShotBtn.MouseButton1Up:Connect(function()
+		            ShotBtn.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
+		        end)
+		
+		        ShotBtn.MouseButton1Click:Connect(function()
+		            if not isSilentAimEnabled() then return end
+		            pressConfiguredKeyOrShoot()
+		            if typeof(Fluent) == "table" and type(Fluent.Notify) == "function" then
+		                Fluent:Notify({ Title = "Silent Aim", Content = "Shot", Duration = 0.5 })
+		            end
+		        end)
+		
+		        -- перетаскивание
+		        local dragging, dragInput, dragStart, startPos = false, nil, nil, nil
+		
+		        ShotBtn.InputBegan:Connect(function(input)
+		            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		                dragging = true
+		                dragStart = input.Position
+		                startPos = ShotBtn.Position
+		                input.Changed:Connect(function()
+		                    if input.UserInputState == Enum.UserInputState.End then
+		                        dragging = false
+		                        adjustButtonPosition()
+		                    end
+		                end)
+		            end
+		        end)
+		
+		        ShotBtn.InputChanged:Connect(function(input)
+		            if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		                dragInput = input
+		            end
+		        end)
+		
+		        UIS.InputChanged:Connect(function(input)
+		            if input == dragInput and dragging then
+		                local delta = input.Position - dragStart
+		                ShotBtn.Position = UDim2.new(
+		                    startPos.X.Scale,
+		                    startPos.X.Offset + delta.X,
+		                    startPos.Y.Scale,
+		                    startPos.Y.Offset + delta.Y
+		                )
+		            end
+		        end)
+		
+		        ShotGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(adjustButtonPosition)
+		        adjustButtonPosition()
+		    end
+		
+		    local function destroyShotButton()
+		        if ShotGui then ShotGui:Destroy() end
+		        ShotGui, ShotBtn = nil, nil
+		    end
+		
+		    -- создаём/удаляем кнопку при смене тумблера
+		    pcall(function()
+		        if uiToggle and uiToggle.OnChanged then
+		            uiToggle:OnChanged(function(val)
+		                if not UIS.TouchEnabled then return end
+		                if val then
+		                    createShotButton()
+		                else
+		                    destroyShotButton()
+		                end
+		            end)
+		        end
+		    end)
+		
+		    -- на старте — синхронизируемся с текущим значением
+		    if UIS.TouchEnabled and isSilentAimEnabled() then
+		        createShotButton()
+		    end
+		
+		    -- при респавне почистим/пересоздадим (на всякий)
+		    if LocalPlayer then
+		        LocalPlayer.CharacterAdded:Connect(function()
+		            task.wait(0.2)
+		            if UIS.TouchEnabled and isSilentAimEnabled() then
+		                destroyShotButton()
+		                createShotButton()
+		            end
+		        end)
+		    end
+		end
+		-- === /MOBILE SILENT AIM SHOT BUTTON ===
+
 
 
