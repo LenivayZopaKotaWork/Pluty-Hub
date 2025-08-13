@@ -2974,3 +2974,110 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 		end)
 
 
+
+			----Button
+					local UIS = game:GetService("UserInputService")
+			local VirtualInputManager = game:GetService("VirtualInputManager")
+			local Players = game:GetService("Players")
+			
+			local player = Players.LocalPlayer
+			local playerGui = player:WaitForChild("PlayerGui")
+			
+			-- === Создаём GUI ===
+			local ScreenGui = Instance.new("ScreenGui")
+			ScreenGui.Name = "MobileSilentAimButton"
+			ScreenGui.Parent = playerGui
+			ScreenGui.IgnoreGuiInset = true
+			ScreenGui.ResetOnSpawn = false
+			
+			-- Кнопка
+			local ImageButton = Instance.new("ImageButton")
+			ImageButton.Size = UDim2.new(0, 70, 0, 70) -- чуть меньше, чем меню
+			ImageButton.AnchorPoint = Vector2.new(1, 1) 
+			ImageButton.Position = UDim2.new(1, -20, 1, -200) -- внизу справа, но выше кнопки меню
+			ImageButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50) -- красный оттенок
+			ImageButton.BackgroundTransparency = 0.2
+			ImageButton.BorderSizePixel = 0
+			ImageButton.AutoButtonColor = true
+			ImageButton.Image = "rbxassetid://6764432401" -- иконка прицела
+			ImageButton.ImageColor3 = Color3.fromRGB(255, 255, 255)
+			ImageButton.Parent = ScreenGui
+			ImageButton.Visible = UIS.TouchEnabled -- скрываем на ПК
+			
+			-- Закругление
+			local corner = Instance.new("UICorner")
+			corner.CornerRadius = UDim.new(1, 0)
+			corner.Parent = ImageButton
+			
+			-- Тень под кнопкой
+			local shadow = Instance.new("UIStroke")
+			shadow.Thickness = 2
+			shadow.Color = Color3.fromRGB(0, 0, 0)
+			shadow.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+			shadow.Parent = ImageButton
+			
+			-- === Ограничение, чтобы кнопка не вылазила за экран ===
+			local function adjustButtonPosition()
+			    local screenWidth = ScreenGui.AbsoluteSize.X
+			    local screenHeight = ScreenGui.AbsoluteSize.Y
+			    local buttonWidth = ImageButton.Size.X.Offset
+			    local buttonHeight = ImageButton.Size.Y.Offset
+			
+			    local posX = math.clamp(ImageButton.Position.X.Offset, 0, screenWidth - buttonWidth)
+			    local posY = math.clamp(ImageButton.Position.Y.Offset, 0, screenHeight - buttonHeight)
+			
+			    ImageButton.Position = UDim2.new(0, posX, 0, posY)
+			end
+			
+			ScreenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(adjustButtonPosition)
+			adjustButtonPosition()
+			
+			-- === При клике эмулируем клавишу R ===
+			local function pressKey(keyCode)
+			    VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
+			    task.wait(0.05)
+			    VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
+			end
+			
+			ImageButton.MouseButton1Click:Connect(function()
+			    pressKey(Enum.KeyCode.R)
+			end)
+			
+			-- === Перетаскивание кнопки ===
+			local dragging = false
+			local dragInput, dragStart, startPos
+			
+			ImageButton.InputBegan:Connect(function(input)
+			    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			        dragging = true
+			        dragStart = input.Position
+			        startPos = ImageButton.Position
+			
+			        input.Changed:Connect(function()
+			            if input.UserInputState == Enum.UserInputState.End then
+			                dragging = false
+			                adjustButtonPosition()
+			            end
+			        end)
+			    end
+			end)
+			
+			ImageButton.InputChanged:Connect(function(input)
+			    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			        dragInput = input
+			    end
+			end)
+			
+			UIS.InputChanged:Connect(function(input)
+			    if input == dragInput and dragging then
+			        local delta = input.Position - dragStart
+			        ImageButton.Position = UDim2.new(
+			            startPos.X.Scale,
+			            startPos.X.Offset + delta.X,
+			            startPos.Y.Scale,
+			            startPos.Y.Offset + delta.Y
+			        )
+			    end
+			end)
+
+
