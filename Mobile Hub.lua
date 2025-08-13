@@ -2974,3 +2974,80 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 		end)
 
 
+--
+							local UIS = game:GetService("UserInputService")
+						    local Players = game:GetService("Players")
+						
+						    local LocalPlayer = Players.LocalPlayer
+						    local playerGui = LocalPlayer:WaitForChild("PlayerGui")
+						
+						    -- Храним ссылку на кнопку
+						    local mobileShootButton = nil
+						
+						    -- Функция для создания кнопки Silent Aim Shot
+						    local function CreateSilentAimButton()
+						        if mobileShootButton then return end -- уже есть
+						
+						        local ScreenGui = Instance.new("ScreenGui")
+						        ScreenGui.Name = "SilentAimButtonGui"
+						        ScreenGui.Parent = playerGui
+						        ScreenGui.IgnoreGuiInset = true
+						        ScreenGui.ResetOnSpawn = false
+						
+						        local btn = Instance.new("ImageButton")
+						        btn.Name = "SilentAimButton"
+						        btn.Size = UDim2.new(0, 80, 0, 80)
+						        btn.AnchorPoint = Vector2.new(1, 1) -- в правый нижний угол
+						        btn.Position = UDim2.new(1, -20, 1, -120) -- чуть выше кнопки меню
+						        btn.BackgroundColor3 = Color3.fromRGB(200, 50, 50) -- красноватая
+						        btn.BackgroundTransparency = 0.2
+						        btn.Image = "rbxassetid://6764432401" -- иконка прицела (пример)
+						        btn.ImageColor3 = Color3.fromRGB(255, 255, 255)
+						        btn.Parent = ScreenGui
+						
+						        -- Эффект при нажатии
+						        btn.MouseButton1Down:Connect(function()
+						            btn.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+						        end)
+						        btn.MouseButton1Up:Connect(function()
+						            btn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+						        end)
+						
+						        -- Нажатие вызывает выстрел
+						        btn.MouseButton1Click:Connect(function()
+						            pcall(function()
+						                local ok = SilentShootOnceFast()
+						                if ok and typeof(Fluent) == "table" and type(Fluent.Notify) == "function" then
+						                    Fluent:Notify({ Title = "Silent Aim", Content = "Shot fired", Duration = 0.6 })
+						                end
+						            end)
+						        end)
+						
+						        mobileShootButton = ScreenGui
+						    end
+						
+						    -- Функция для удаления кнопки
+						    local function RemoveSilentAimButton()
+						        if mobileShootButton then
+						            mobileShootButton:Destroy()
+						            mobileShootButton = nil
+						        end
+						    end
+						
+						    -- === Подключение к твоему Toggle ===
+						    local SilentAimToggle = Tabs.Combat:AddToggle("SilentAimToggle", { Title = "SilentAim", Default = false })
+						
+						    SilentAimToggle:OnChanged(function()
+						        local enabled = Options.SilentAimToggle.Value
+						        print("SilentAim toggle changed:", enabled)
+						
+						        if UIS.TouchEnabled then
+						            if enabled then
+						                CreateSilentAimButton()
+						            else
+						                RemoveSilentAimButton()
+						            end
+						        end
+						    end)
+						
+						    Options.SilentAimToggle:SetValue(false)
