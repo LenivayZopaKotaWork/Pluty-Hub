@@ -2976,7 +2976,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 
 
 			----Button
-									-- === КНОПКА SILENT AIM ДЛЯ МОБИЛКИ (КРАСИВАЯ + АНИМАЦИЯ) ===
+							-- === КНОПКА SILENT AIM ДЛЯ МОБИЛКИ (КРАСИВАЯ + СПРАВА) ===
 					local UIS = game:GetService("UserInputService")
 					local VirtualInputManager = game:GetService("VirtualInputManager")
 					local Players = game:GetService("Players")
@@ -2995,11 +2995,11 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 					-- Кнопка
 					local ImageButton = Instance.new("ImageButton")
 					ImageButton.Size = UDim2.new(0, 70, 0, 70)
-					ImageButton.AnchorPoint = Vector2.new(1, 1)
-					ImageButton.Position = UDim2.new(1, -40, 1, -200) -- Правый нижний угол
+					ImageButton.AnchorPoint = Vector2.new(1, 0.5)
+					ImageButton.Position = UDim2.new(1, -40, 0.5, 0) -- справа по центру
 					ImageButton.BackgroundColor3 = Color3.fromRGB(255, 70, 70)
 					ImageButton.BackgroundTransparency = 0
-					ImageButton.Image = "rbxassetid://6764432401" -- Иконка прицела
+					ImageButton.Image = "rbxassetid://6764432401" -- иконка прицела
 					ImageButton.ImageColor3 = Color3.fromRGB(255, 255, 255)
 					ImageButton.Parent = ScreenGui
 					
@@ -3021,7 +3021,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 					Shadow.Position = UDim2.new(0.5, 4, 0.5, 4)
 					Shadow.Size = UDim2.new(1.3, 0, 1.3, 0)
 					Shadow.BackgroundTransparency = 1
-					Shadow.Image = "rbxassetid://1316045217" -- мягкая тень
+					Shadow.Image = "rbxassetid://1316045217"
 					Shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
 					Shadow.ImageTransparency = 0.5
 					Shadow.ZIndex = 0
@@ -3034,7 +3034,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 					    VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
 					end
 					
-					-- Анимация нажатия
+					-- Анимация клика
 					local function animateClick()
 					    local tweenDown = TweenService:Create(ImageButton, TweenInfo.new(0.08), {
 					        Size = UDim2.new(0, 64, 0, 64),
@@ -3107,6 +3107,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 					    end
 					end)
 					-- === /КНОПКА SILENT AIM ===
+
 
 
 
