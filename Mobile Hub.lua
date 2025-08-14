@@ -2904,7 +2904,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 		ImageButton.AnchorPoint = Vector2.new(0.5, 0.5)
 		ImageButton.Position = UDim2.new(0.5, 0, 0.5, 0)
 		ImageButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-		ImageButton.BackgroundTransparency = 0.8 -- 80% прозрачность
+		ImageButton.BackgroundTransparency = 0.2 -- 20% прозрачность
 		ImageButton.BorderColor3 = Color3.fromRGB(255, 0, 0) -- красная обводка
 		ImageButton.BorderSizePixel = 2
 		ImageButton.Image = ""
@@ -2992,6 +2992,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 		        )
 		    end
 		end)
+
 
 		
 
