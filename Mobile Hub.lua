@@ -2976,7 +2976,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 
 
 			----Button
-											-- === КНОПКА SILENT AIM ДЛЯ МОБИЛКИ (ФИКС ПОЗИЦИИ) ===
+												-- === КНОПКА SILENT AIM ДЛЯ МОБИЛКИ (С ТВОЕЙ КАРТИНКОЙ) ===
 						local UIS = game:GetService("UserInputService")
 						local VirtualInputManager = game:GetService("VirtualInputManager")
 						local Players = game:GetService("Players")
@@ -2997,34 +2997,10 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 						ImageButton.Size = UDim2.new(0, 70, 0, 70)
 						ImageButton.AnchorPoint = Vector2.new(0.5, 0.5)
 						ImageButton.Position = UDim2.new(0.85, 0, 0.5, 0) -- 85% от ширины, центр по высоте
-						ImageButton.BackgroundColor3 = Color3.fromRGB(255, 70, 70)
-						ImageButton.Image = "rbxassetid://6764432401" -- иконка прицела
+						ImageButton.BackgroundTransparency = 1 -- прозрачный фон
+						ImageButton.Image = "rbxassetid://5456882482" -- твоя картинка
 						ImageButton.ImageColor3 = Color3.fromRGB(255, 255, 255)
 						ImageButton.Parent = ScreenGui
-						
-						-- Круглая форма
-						local UICorner = Instance.new("UICorner")
-						UICorner.CornerRadius = UDim.new(1, 0)
-						UICorner.Parent = ImageButton
-						
-						-- Обводка
-						local UIStroke = Instance.new("UIStroke")
-						UIStroke.Thickness = 3
-						UIStroke.Color = Color3.fromRGB(35, 35, 35)
-						UIStroke.Parent = ImageButton
-						
-						-- Тень
-						local Shadow = Instance.new("ImageLabel")
-						Shadow.Name = "Shadow"
-						Shadow.AnchorPoint = Vector2.new(0.5, 0.5)
-						Shadow.Position = UDim2.new(0.5, 4, 0.5, 4)
-						Shadow.Size = UDim2.new(1.3, 0, 1.3, 0)
-						Shadow.BackgroundTransparency = 1
-						Shadow.Image = "rbxassetid://1316045217"
-						Shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-						Shadow.ImageTransparency = 0.5
-						Shadow.ZIndex = 0
-						Shadow.Parent = ImageButton
 						
 						-- === Функция нажатия клавиши ===
 						local function pressKey(keyCode)
@@ -3033,15 +3009,13 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 						    VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
 						end
 						
-						-- === Анимация клика ===
+						-- === Анимация клика (лёгкое уменьшение) ===
 						local function animateClick()
 						    local tweenDown = TweenService:Create(ImageButton, TweenInfo.new(0.08), {
-						        Size = UDim2.new(0, 64, 0, 64),
-						        BackgroundColor3 = Color3.fromRGB(235, 50, 50)
+						        Size = UDim2.new(0, 64, 0, 64)
 						    })
 						    local tweenUp = TweenService:Create(ImageButton, TweenInfo.new(0.1), {
-						        Size = UDim2.new(0, 70, 0, 70),
-						        BackgroundColor3 = Color3.fromRGB(255, 70, 70)
+						        Size = UDim2.new(0, 70, 0, 70)
 						    })
 						    tweenDown:Play()
 						    tweenDown.Completed:Wait()
