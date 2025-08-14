@@ -18,7 +18,7 @@ getgenv().r3thexecuted = false
         Title = "Pluty Hub Mobile " .. Fluent.Version,
         SubTitle = "by Pluty",
         TabWidth = 160,
-        Size = UDim2.fromOffset(460, 380),
+        Size = UDim2.fromOffset(480, 400),
         Acrylic = false, -- The blur may be detectable, setting this to false disables blur entirely
         Theme = "Dark",
         MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
@@ -2884,114 +2884,111 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 
 
 
-					local UIS = game:GetService("UserInputService")
-					local VirtualInputManager = game:GetService("VirtualInputManager")
-					local Players = game:GetService("Players")
-					
-					local player = Players.LocalPlayer
-					local playerGui = player:WaitForChild("PlayerGui")
-					
-					-- === Создаём GUI ===
-					local ScreenGui = Instance.new("ScreenGui")
-					ScreenGui.Name = "PlutyHubMenu"
-					ScreenGui.Parent = playerGui
-					ScreenGui.IgnoreGuiInset = true
-					ScreenGui.ResetOnSpawn = false
-					
-					-- === Кнопка "Pluty Hub" ===
-					local MenuButton = Instance.new("TextButton")
-					MenuButton.Size = UDim2.new(0, 150, 0, 40)
-					MenuButton.Position = UDim2.new(0.5, 0, 0.4, 0)
-					MenuButton.AnchorPoint = Vector2.new(0.5, 0.5)
-					MenuButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-					MenuButton.BorderColor3 = Color3.fromRGB(150, 0, 0) -- тёмно-красная обводка
-					MenuButton.BorderSizePixel = 2
-					MenuButton.Text = "" -- текст через TextLabel с градиентом
-					MenuButton.Parent = ScreenGui
-					
-					-- === Градиентный текст на кнопке ===
-					local TextLabel = Instance.new("TextLabel")
-					TextLabel.Size = UDim2.new(1, 0, 1, 0)
-					TextLabel.BackgroundTransparency = 1
-					TextLabel.Text = "Pluty Hub"
-					TextLabel.Font = Enum.Font.GothamBold
-					TextLabel.TextSize = 20
-					TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- базовый цвет, чтобы градиент был виден
-					TextLabel.TextStrokeTransparency = 0.7
-					TextLabel.Parent = MenuButton
-					
-					-- Градиент
-					local gradient = Instance.new("UIGradient")
-					gradient.Color = ColorSequence.new{
-					    ColorSequenceKeypoint.new(0, Color3.fromRGB(150, 0, 0)), -- тёмно-красный
-					    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 255)) -- синий
-					}
-					gradient.Rotation = 0
-					gradient.Parent = TextLabel
-					
-					-- === Ограничение, чтобы кнопка не вылазила за экран ===
-					local function adjustButtonPosition()
-					    local screenWidth = ScreenGui.AbsoluteSize.X
-					    local screenHeight = ScreenGui.AbsoluteSize.Y
-					    local buttonWidth = MenuButton.Size.X.Offset
-					    local buttonHeight = MenuButton.Size.Y.Offset
-					
-					    local posX = math.clamp(MenuButton.Position.X.Offset, 0, screenWidth - buttonWidth)
-					    local posY = math.clamp(MenuButton.Position.Y.Offset, 0, screenHeight - buttonHeight)
-					
-					    MenuButton.Position = UDim2.new(0, posX, 0, posY)
-					end
-					
-					ScreenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(adjustButtonPosition)
-					adjustButtonPosition()
-					
-					-- === Эмуляция нажатия клавиши LeftControl при клике ===
-					local function pressKey(keyCode)
-					    VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
-					    task.wait(0.05)
-					    VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
-					end
-					
-					MenuButton.MouseButton1Click:Connect(function()
-					    pressKey(Enum.KeyCode.LeftControl)
-					end)
-					
-					-- === Перетаскивание ===
-					local dragging = false
-					local dragInput, dragStart, startPos
-					
-					MenuButton.InputBegan:Connect(function(input)
-					    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-					        dragging = true
-					        dragStart = input.Position
-					        startPos = MenuButton.Position
-					
-					        input.Changed:Connect(function()
-					            if input.UserInputState == Enum.UserInputState.End then
-					                dragging = false
-					                adjustButtonPosition()
-					            end
-					        end)
-					    end
-					end)
-					
-					MenuButton.InputChanged:Connect(function(input)
-					    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-					        dragInput = input
-					    end
-					end)
-					
-					UIS.InputChanged:Connect(function(input)
-					    if input == dragInput and dragging then
-					        local delta = input.Position - dragStart
-					        MenuButton.Position = UDim2.new(
-					            startPos.X.Scale,
-					            startPos.X.Offset + delta.X,
-					            startPos.Y.Scale,
-					            startPos.Y.Offset + delta.Y
-					        )
-					    end
-					end)
+			local Players = game:GetService("Players")
+			local UIS = game:GetService("UserInputService")
+			local VirtualInputManager = game:GetService("VirtualInputManager")
+			
+			local player = Players.LocalPlayer
+			local playerGui = player:WaitForChild("PlayerGui")
+			
+			-- === Создаём GUI ===
+			local ScreenGui = Instance.new("ScreenGui")
+			ScreenGui.Name = "PlutyHubButton"
+			ScreenGui.Parent = playerGui
+			ScreenGui.IgnoreGuiInset = true
+			ScreenGui.ResetOnSpawn = false
+			
+			-- === Кнопка ===
+			local TextButton = Instance.new("TextButton")
+			TextButton.Size = UDim2.new(0, 150, 0, 50)
+			TextButton.Position = UDim2.new(0.7, 0, 0.5, 0)
+			TextButton.AnchorPoint = Vector2.new(0.5, 0.5)
+			TextButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+			TextButton.BorderSizePixel = 3
+			TextButton.BorderColor3 = Color3.fromRGB(150, 0, 0)
+			TextButton.Text = ""
+			TextButton.Parent = ScreenGui
+			
+			-- === Градиент текста ===
+			local TextLabel = Instance.new("TextLabel")
+			TextLabel.Size = UDim2.new(1, 0, 1, 0)
+			TextLabel.BackgroundTransparency = 1
+			TextLabel.Text = "Pluty Hub"
+			TextLabel.TextScaled = true
+			TextLabel.TextStrokeTransparency = 0.8
+			TextLabel.Font = Enum.Font.GothamBold
+			TextLabel.Parent = TextButton
+			
+			local UIGradient = Instance.new("UIGradient")
+			UIGradient.Color = ColorSequence.new{
+			    ColorSequenceKeypoint.new(0, Color3.fromRGB(150, 0, 0)),
+			    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 200))
+			}
+			UIGradient.Rotation = 0
+			UIGradient.Parent = TextLabel
+			
+			-- === Ограничение по экрану ===
+			local function adjustButtonPosition()
+			    local screenWidth = ScreenGui.AbsoluteSize.X
+			    local screenHeight = ScreenGui.AbsoluteSize.Y
+			    local buttonWidth = TextButton.AbsoluteSize.X
+			    local buttonHeight = TextButton.AbsoluteSize.Y
+			
+			    local posX = math.clamp(TextButton.Position.X.Offset, 0, screenWidth - buttonWidth)
+			    local posY = math.clamp(TextButton.Position.Y.Offset, 0, screenHeight - buttonHeight)
+			
+			    TextButton.Position = UDim2.new(0, posX, 0, posY)
+			end
+			
+			ScreenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(adjustButtonPosition)
+			adjustButtonPosition()
+			
+			-- === Эмуляция LeftControl ===
+			local function pressLeftControl()
+			    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.LeftControl, false, nil)
+			    task.wait(0.05)
+			    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.LeftControl, false, nil)
+			end
+			
+			TextButton.MouseButton1Click:Connect(pressLeftControl)
+			
+			-- === Перетаскивание ===
+			local dragging = false
+			local dragInput, dragStart, startPos
+			
+			TextButton.InputBegan:Connect(function(input)
+			    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			        dragging = true
+			        dragStart = input.Position
+			        startPos = TextButton.Position
+			
+			        input.Changed:Connect(function()
+			            if input.UserInputState == Enum.UserInputState.End then
+			                dragging = false
+			                adjustButtonPosition()
+			            end
+			        end)
+			    end
+			end)
+			
+			TextButton.InputChanged:Connect(function(input)
+			    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			        dragInput = input
+			    end
+			end)
+			
+			UIS.InputChanged:Connect(function(input)
+			    if input == dragInput and dragging then
+			        local delta = input.Position - dragStart
+			        TextButton.Position = UDim2.new(
+			            startPos.X.Scale,
+			            startPos.X.Offset + delta.X,
+			            startPos.Y.Scale,
+			            startPos.Y.Offset + delta.Y
+			        )
+			    end
+			end)
+
 
 
 
