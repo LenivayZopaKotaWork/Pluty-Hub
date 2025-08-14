@@ -2928,10 +2928,10 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 			UIGradient.Rotation = 0
 			UIGradient.Parent = TextLabel
 			
-			-- === Зона перетаскивания сверху ===
+			-- === Зона перетаскивания справа снизу ===
 			local DragFrame = Instance.new("Frame")
-			DragFrame.Size = UDim2.new(1, 0, 0, 15) -- небольшой прямоугольник сверху
-			DragFrame.Position = UDim2.new(0, 0, 0, -15) -- немного над кнопкой
+			DragFrame.Size = UDim2.new(0, 20, 0, 20) -- небольшой квадрат для перетаскивания
+			DragFrame.Position = UDim2.new(1, -25, 1, -25) -- справа снизу с небольшим зазором
 			DragFrame.BackgroundTransparency = 1
 			DragFrame.Parent = ImageButton
 			
@@ -2997,6 +2997,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 			        )
 			    end
 			end)
+
 
 
 
