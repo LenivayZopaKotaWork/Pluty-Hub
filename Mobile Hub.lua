@@ -2976,110 +2976,131 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 
 
 			----Button
-												-- === КНОПКА SILENT AIM ДЛЯ МОБИЛКИ ===
-						local UIS = game:GetService("UserInputService")
-						local VirtualInputManager = game:GetService("VirtualInputManager")
-						local Players = game:GetService("Players")
-						local TweenService = game:GetService("TweenService")
-						
-						local player = Players.LocalPlayer
-						local playerGui = player:WaitForChild("PlayerGui")
-						
-						-- === Создаём GUI ===
-						local ScreenGui = Instance.new("ScreenGui")
-						ScreenGui.Name = "SilentAimButton"
-						ScreenGui.Parent = playerGui
-						ScreenGui.IgnoreGuiInset = true
-						ScreenGui.ResetOnSpawn = false
-						
-						-- === Кнопка ===
-						local ImageButton = Instance.new("ImageButton")
-						ImageButton.Size = UDim2.new(0, 70, 0, 70)
-						ImageButton.AnchorPoint = Vector2.new(0.5, 0.5)
-						ImageButton.Position = UDim2.new(0.85, 0, 0.5, 0) -- справа по центру
-						ImageButton.BackgroundTransparency = 1 -- полностью прозрачный фон
-						ImageButton.Image = "rbxassetid://5456882455" -- твоя картинка
-						ImageButton.Parent = ScreenGui
-						
-						-- === Функция нажатия клавиши ===
-						local function pressKey(keyCode)
-						    VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
-						    task.wait(0.05)
-						    VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
-						end
-						
-						-- === Анимация клика ===
-						local function animateClick()
-						    local tweenDown = TweenService:Create(ImageButton, TweenInfo.new(0.08), {
-						        Size = UDim2.new(0, 64, 0, 64)
-						    })
-						    local tweenUp = TweenService:Create(ImageButton, TweenInfo.new(0.1), {
-						        Size = UDim2.new(0, 70, 0, 70)
-						    })
-						    tweenDown:Play()
-						    tweenDown.Completed:Wait()
-						    tweenUp:Play()
-						end
-						
-						-- === При клике нажимаем R ===
-						ImageButton.MouseButton1Click:Connect(function()
-						    animateClick()
-						    pressKey(Enum.KeyCode.R)
-						end)
-						
-						-- === Перетаскивание ===
-						local dragging = false
-						local dragInput, dragStart, startPos
-						
-						local function adjustButtonPosition()
-						    local screenWidth = ScreenGui.AbsoluteSize.X
-						    local screenHeight = ScreenGui.AbsoluteSize.Y
-						    local buttonWidth = ImageButton.Size.X.Offset
-						    local buttonHeight = ImageButton.Size.Y.Offset
-						
-						    local posX = math.clamp(ImageButton.Position.X.Offset, 0, screenWidth - buttonWidth)
-						    local posY = math.clamp(ImageButton.Position.Y.Offset, 0, screenHeight - buttonHeight)
-						
-						    ImageButton.Position = UDim2.new(0, posX, 0, posY)
-						end
-						
-						ScreenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(adjustButtonPosition)
-						
-						ImageButton.InputBegan:Connect(function(input)
-						    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-						        dragging = true
-						        dragStart = input.Position
-						        startPos = ImageButton.Position
-						
-						        input.Changed:Connect(function()
-						            if input.UserInputState == Enum.UserInputState.End then
-						                dragging = false
-						                adjustButtonPosition()
-						            end
-						        end)
-						    end
-						end)
-						
-						ImageButton.InputChanged:Connect(function(input)
-						    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-						        dragInput = input
-						    end
-						end)
-						
-						UIS.InputChanged:Connect(function(input)
-						    if input == dragInput and dragging then
-						        local delta = input.Position - dragStart
-						        ImageButton.Position = UDim2.new(
-						            startPos.X.Scale,
-						            startPos.X.Offset + delta.X,
-						            startPos.Y.Scale,
-						            startPos.Y.Offset + delta.Y
-						        )
-						    end
-						end)
-						
-						-- === Гарантия, что кнопка в зоне видимости при старте ===
-						task.delay(0.1, function()
-						    ImageButton.Position = UDim2.new(0.85, 0, 0.5, 0)
-						end)
-						-- === /КНОПКА SILENT AIM ===
+											-- === КНОПКА SILENT AIM ДЛЯ МОБИЛКИ ===
+					local UIS = game:GetService("UserInputService")
+					local VirtualInputManager = game:GetService("VirtualInputManager")
+					local Players = game:GetService("Players")
+					local TweenService = game:GetService("TweenService")
+					
+					local player = Players.LocalPlayer
+					local playerGui = player:WaitForChild("PlayerGui")
+					
+					-- === Создаём GUI ===
+					local ScreenGui = Instance.new("ScreenGui")
+					ScreenGui.Name = "SilentAimButton"
+					ScreenGui.Parent = playerGui
+					ScreenGui.IgnoreGuiInset = true
+					ScreenGui.ResetOnSpawn = false
+					
+					-- === Надпись "Silent Aim" ===
+					local Label = Instance.new("TextLabel")
+					Label.Size = UDim2.new(0, 100, 0, 20)
+					Label.AnchorPoint = Vector2.new(0.5, 1)
+					Label.Position = UDim2.new(0.85, 0, 0.5, -50) -- чуть выше кнопки
+					Label.BackgroundTransparency = 1
+					Label.Text = "Silent Aim"
+					Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+					Label.TextScaled = true
+					Label.Font = Enum.Font.GothamBold
+					Label.Parent = ScreenGui
+					
+					-- === Кнопка ===
+					local ImageButton = Instance.new("ImageButton")
+					ImageButton.Size = UDim2.new(0, 90, 0, 90) -- увеличенный размер
+					ImageButton.AnchorPoint = Vector2.new(0.5, 0.5)
+					ImageButton.Position = UDim2.new(0.85, 0, 0.5, 0) -- справа по центру
+					ImageButton.BackgroundTransparency = 1
+					ImageButton.Image = "rbxassetid://5484704814" -- новая картинка
+					ImageButton.Parent = ScreenGui
+					
+					-- === Функция нажатия клавиши ===
+					local function pressKey(keyCode)
+					    VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
+					    task.wait(0.05)
+					    VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
+					end
+					
+					-- === Анимация клика ===
+					local function animateClick()
+					    local tweenDown = TweenService:Create(ImageButton, TweenInfo.new(0.08), {
+					        Size = UDim2.new(0, 82, 0, 82)
+					    })
+					    local tweenUp = TweenService:Create(ImageButton, TweenInfo.new(0.1), {
+					        Size = UDim2.new(0, 90, 0, 90)
+					    })
+					    tweenDown:Play()
+					    tweenDown.Completed:Wait()
+					    tweenUp:Play()
+					end
+					
+					-- === При клике нажимаем R ===
+					ImageButton.MouseButton1Click:Connect(function()
+					    animateClick()
+					    pressKey(Enum.KeyCode.R)
+					end)
+					
+					-- === Перетаскивание ===
+					local dragging = false
+					local dragInput, dragStart, startPos
+					
+					local function adjustButtonPosition()
+					    local screenWidth = ScreenGui.AbsoluteSize.X
+					    local screenHeight = ScreenGui.AbsoluteSize.Y
+					    local buttonWidth = ImageButton.Size.X.Offset
+					    local buttonHeight = ImageButton.Size.Y.Offset
+					
+					    local posX = math.clamp(ImageButton.Position.X.Offset, 0, screenWidth - buttonWidth)
+					    local posY = math.clamp(ImageButton.Position.Y.Offset, 0, screenHeight - buttonHeight)
+					
+					    ImageButton.Position = UDim2.new(0, posX, 0, posY)
+					    Label.Position = UDim2.new(0, posX + buttonWidth/2, 0, posY - 10)
+					end
+					
+					ScreenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(adjustButtonPosition)
+					
+					ImageButton.InputBegan:Connect(function(input)
+					    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					        dragging = true
+					        dragStart = input.Position
+					        startPos = ImageButton.Position
+					
+					        input.Changed:Connect(function()
+					            if input.UserInputState == Enum.UserInputState.End then
+					                dragging = false
+					                adjustButtonPosition()
+					            end
+					        end)
+					    end
+					end)
+					
+					ImageButton.InputChanged:Connect(function(input)
+					    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+					        dragInput = input
+					    end
+					end)
+					
+					UIS.InputChanged:Connect(function(input)
+					    if input == dragInput and dragging then
+					        local delta = input.Position - dragStart
+					        ImageButton.Position = UDim2.new(
+					            startPos.X.Scale,
+					            startPos.X.Offset + delta.X,
+					            startPos.Y.Scale,
+					            startPos.Y.Offset + delta.Y
+					        )
+					        Label.Position = UDim2.new(
+					            startPos.X.Scale,
+					            startPos.X.Offset + delta.X + ImageButton.Size.X.Offset/2,
+					            startPos.Y.Scale,
+					            startPos.Y.Offset + delta.Y - 10
+					        )
+					    end
+					end)
+					
+					-- === Гарантия, что кнопка в зоне видимости при старте ===
+					task.delay(0.1, function()
+					    ImageButton.Position = UDim2.new(0.85, 0, 0.5, 0)
+					    Label.Position = UDim2.new(0.85, 0, 0.5, -50)
+					end)
+					-- === /КНОПКА SILENT AIM ===
+
