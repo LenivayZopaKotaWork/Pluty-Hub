@@ -2884,7 +2884,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 
 
 
-					local UIS = game:GetService("UserInputService")
+		local UIS = game:GetService("UserInputService")
 		local VirtualInputManager = game:GetService("VirtualInputManager")
 		local Players = game:GetService("Players")
 		
@@ -2893,42 +2893,24 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 		
 		-- === Создаём GUI ===
 		local ScreenGui = Instance.new("ScreenGui")
-		ScreenGui.Name = "PlutyHubButton"
+		ScreenGui.Name = "MobileMenuButton"
 		ScreenGui.Parent = playerGui
 		ScreenGui.IgnoreGuiInset = true
 		ScreenGui.ResetOnSpawn = false
 		
-		-- === Кнопка с визуалом ===
+		-- === Кнопка ===
 		local ImageButton = Instance.new("ImageButton")
-		ImageButton.Size = UDim2.new(0, 150, 0, 50)
+		ImageButton.Size = UDim2.new(0, 120, 0, 50) -- прямоугольная
 		ImageButton.AnchorPoint = Vector2.new(0.5, 0.5)
-		ImageButton.Position = UDim2.new(0.7, 0, 0.5, 0)
-		ImageButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-		ImageButton.BackgroundTransparency = 0.7 -- прозрачная
-		ImageButton.BorderSizePixel = 3
-		ImageButton.BorderColor3 = Color3.fromRGB(150, 0, 0)
-		ImageButton.Image = "" -- можно вставить иконку
+		ImageButton.Position = UDim2.new(0.5, 0, 0.5, 0)
+		ImageButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+		ImageButton.BackgroundTransparency = 0.7 -- 30% непрозрачности
+		ImageButton.BorderColor3 = Color3.fromRGB(255, 0, 0) -- красная обводка
+		ImageButton.BorderSizePixel = 2
+		ImageButton.Image = "" -- иконка, если нужно
 		ImageButton.Parent = ScreenGui
 		
-		-- === Текст на кнопке с градиентом ===
-		local TextLabel = Instance.new("TextLabel")
-		TextLabel.Size = UDim2.new(1, 0, 1, 0)
-		TextLabel.BackgroundTransparency = 1
-		TextLabel.Text = "Pluty Hub"
-		TextLabel.Font = Enum.Font.GothamBold
-		TextLabel.TextSize = 18
-		TextLabel.TextStrokeTransparency = 0.8
-		TextLabel.Parent = ImageButton
-		
-		local UIGradient = Instance.new("UIGradient")
-		UIGradient.Color = ColorSequence.new{
-		    ColorSequenceKeypoint.new(0, Color3.fromRGB(150, 0, 0)),
-		    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 200))
-		}
-		UIGradient.Rotation = 0
-		UIGradient.Parent = TextLabel
-		
-		-- === Ограничение, чтобы кнопка не вылезала за экран ===
+		-- === Ограничение кнопки внутри экрана ===
 		local function adjustButtonPosition()
 		    local screenWidth = ScreenGui.AbsoluteSize.X
 		    local screenHeight = ScreenGui.AbsoluteSize.Y
@@ -2944,7 +2926,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 		ScreenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(adjustButtonPosition)
 		adjustButtonPosition()
 		
-		-- === Логика клика (имитация LeftControl) ===
+		-- === Эмуляция LeftControl ===
 		local function pressKey(keyCode)
 		    VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
 		    task.wait(0.05)
@@ -2991,6 +2973,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 		        )
 		    end
 		end)
+
 
 
 
