@@ -2880,7 +2880,7 @@ SaveManager:SetFolder("FluentConfig/MM2")
 InterfaceManager:BuildInterfaceSection(Tabs.Settings)
 SaveManager:BuildConfigSection(Tabs.Settings)
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/Pluty-Hub/refs/heads/main/qwerty.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/Pluty-Hub/refs/heads/main/mobile.lua"))()
 
 
 
