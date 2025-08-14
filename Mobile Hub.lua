@@ -2976,7 +2976,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 
 
 			----Button
-											-- === КНОПКА SILENT AIM ДЛЯ МОБИЛКИ ===
+												-- === КНОПКА SILENT AIM ДЛЯ МОБИЛКИ ===
 						local UIS = game:GetService("UserInputService")
 						local VirtualInputManager = game:GetService("VirtualInputManager")
 						local Players = game:GetService("Players")
@@ -2992,51 +2992,44 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 						ScreenGui.IgnoreGuiInset = true
 						ScreenGui.ResetOnSpawn = false
 						
-						-- === Надпись с обводкой ===
-						local function createTextLabel(text, parent)
-						    local mainLabel = Instance.new("TextLabel")
-						    mainLabel.Size = UDim2.new(0, 110, 0, 22)
-						    mainLabel.AnchorPoint = Vector2.new(0.5, 1)
-						    mainLabel.BackgroundTransparency = 1
-						    mainLabel.Text = text
-						    mainLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-						    mainLabel.TextScaled = true
-						    mainLabel.Font = Enum.Font.GothamBold
-						    mainLabel.Parent = parent
+						-- === Надпись ===
+						local Label = Instance.new("TextLabel")
+						Label.Size = UDim2.new(0, 80, 0, 18)
+						Label.AnchorPoint = Vector2.new(0.5, 1)
+						Label.BackgroundTransparency = 1
+						Label.Text = "Silent Aim"
+						Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+						Label.TextScaled = true
+						Label.Font = Enum.Font.GothamBold
+						Label.Parent = ScreenGui
 						
-						    local stroke = Instance.new("UIStroke")
-						    stroke.Thickness = 2
-						    stroke.Color = Color3.fromRGB(0, 0, 0)
-						    stroke.Parent = mainLabel
-						
-						    return mainLabel
-						end
-						
-						local Label = createTextLabel("Silent Aim", ScreenGui)
-						Label.Position = UDim2.new(0.85, 0, 0.5, -55)
+						local strokeText = Instance.new("UIStroke")
+						strokeText.Thickness = 2
+						strokeText.Color = Color3.fromRGB(0, 0, 0)
+						strokeText.Parent = Label
 						
 						-- === Кнопка ===
 						local ImageButton = Instance.new("ImageButton")
-						ImageButton.Size = UDim2.new(0, 90, 0, 90)
+						ImageButton.Size = UDim2.new(0, 60, 0, 60) -- Меньше размера
 						ImageButton.AnchorPoint = Vector2.new(0.5, 0.5)
 						ImageButton.Position = UDim2.new(0.85, 0, 0.5, 0)
-						ImageButton.BackgroundTransparency = 1
-						ImageButton.Image = "rbxassetid://5484704830"
+						ImageButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- Тёмно-серый фон
+						ImageButton.Image = "rbxassetid://1648938003"
 						ImageButton.Parent = ScreenGui
 						
-						-- Обводка кнопки
+						-- Обводка кнопки (красная)
 						local buttonStroke = Instance.new("UIStroke")
 						buttonStroke.Thickness = 3
-						buttonStroke.Color = Color3.fromRGB(255, 255, 255)
+						buttonStroke.Color = Color3.fromRGB(255, 0, 0)
 						buttonStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 						buttonStroke.Parent = ImageButton
 						
 						-- === Подсветка при наведении ===
 						ImageButton.MouseEnter:Connect(function()
-						    TweenService:Create(buttonStroke, TweenInfo.new(0.15), {Color = Color3.fromRGB(0, 255, 0)}):Play()
+						    TweenService:Create(buttonStroke, TweenInfo.new(0.15), {Color = Color3.fromRGB(255, 80, 80)}):Play()
 						end)
 						ImageButton.MouseLeave:Connect(function()
-						    TweenService:Create(buttonStroke, TweenInfo.new(0.15), {Color = Color3.fromRGB(255, 255, 255)}):Play()
+						    TweenService:Create(buttonStroke, TweenInfo.new(0.15), {Color = Color3.fromRGB(255, 0, 0)}):Play()
 						end)
 						
 						-- === Функция нажатия клавиши ===
@@ -3048,8 +3041,8 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 						
 						-- === Анимация клика ===
 						local function animateClick()
-						    local tweenDown = TweenService:Create(ImageButton, TweenInfo.new(0.08), {Size = UDim2.new(0, 82, 0, 82)})
-						    local tweenUp = TweenService:Create(ImageButton, TweenInfo.new(0.1), {Size = UDim2.new(0, 90, 0, 90)})
+						    local tweenDown = TweenService:Create(ImageButton, TweenInfo.new(0.08), {Size = UDim2.new(0, 54, 0, 54)})
+						    local tweenUp = TweenService:Create(ImageButton, TweenInfo.new(0.1), {Size = UDim2.new(0, 60, 0, 60)})
 						    tweenDown:Play()
 						    tweenDown.Completed:Wait()
 						    tweenUp:Play()
@@ -3072,7 +3065,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 						    local posY = math.clamp(ImageButton.Position.Y.Offset, 0, screenHeight - buttonHeight)
 						
 						    ImageButton.Position = UDim2.new(0, posX, 0, posY)
-						    Label.Position = UDim2.new(0, posX + buttonWidth / 2, 0, posY - 5)
+						    Label.Position = UDim2.new(0, posX + buttonWidth / 2, 0, posY - 3)
 						end
 						
 						ScreenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(adjustButtonPosition)
@@ -3111,13 +3104,13 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 						            startPos.X.Scale,
 						            startPos.X.Offset + delta.X + ImageButton.Size.X.Offset / 2,
 						            startPos.Y.Scale,
-						            startPos.Y.Offset + delta.Y - 5
+						            startPos.Y.Offset + delta.Y - 3
 						        )
 						    end
 						end)
 						
 						task.delay(0.1, function()
 						    ImageButton.Position = UDim2.new(0.85, 0, 0.5, 0)
-						    Label.Position = UDim2.new(0.85, 0, 0.5, -55)
+						    Label.Position = UDim2.new(0.85, 0, 0.5, -33)
 						end)
 
