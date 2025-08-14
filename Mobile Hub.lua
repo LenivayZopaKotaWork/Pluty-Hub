@@ -2884,110 +2884,111 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 
 
 
-			local Players = game:GetService("Players")
-			local UIS = game:GetService("UserInputService")
-			local VirtualInputManager = game:GetService("VirtualInputManager")
-			
-			local player = Players.LocalPlayer
-			local playerGui = player:WaitForChild("PlayerGui")
-			
-			-- === Создаём GUI ===
-			local ScreenGui = Instance.new("ScreenGui")
-			ScreenGui.Name = "PlutyHubButton"
-			ScreenGui.Parent = playerGui
-			ScreenGui.IgnoreGuiInset = true
-			ScreenGui.ResetOnSpawn = false
-			
-			-- === Кнопка ===
-			local TextButton = Instance.new("TextButton")
-			TextButton.Size = UDim2.new(0, 150, 0, 50)
-			TextButton.Position = UDim2.new(0.7, 0, 0.5, 0)
-			TextButton.AnchorPoint = Vector2.new(0.5, 0.5)
-			TextButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-			TextButton.BorderSizePixel = 3
-			TextButton.BorderColor3 = Color3.fromRGB(150, 0, 0)
-			TextButton.Text = ""
-			TextButton.Parent = ScreenGui
-			
-			-- === Градиент текста ===
-			local TextLabel = Instance.new("TextLabel")
-			TextLabel.Size = UDim2.new(1, 0, 1, 0)
-			TextLabel.BackgroundTransparency = 1
-			TextLabel.Text = "Pluty Hub"
-			TextLabel.TextScaled = true
-			TextLabel.TextStrokeTransparency = 0.8
-			TextLabel.Font = Enum.Font.GothamBold
-			TextLabel.Parent = TextButton
-			
-			local UIGradient = Instance.new("UIGradient")
-			UIGradient.Color = ColorSequence.new{
-			    ColorSequenceKeypoint.new(0, Color3.fromRGB(150, 0, 0)),
-			    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 200))
-			}
-			UIGradient.Rotation = 0
-			UIGradient.Parent = TextLabel
-			
-			-- === Ограничение по экрану ===
-			local function adjustButtonPosition()
-			    local screenWidth = ScreenGui.AbsoluteSize.X
-			    local screenHeight = ScreenGui.AbsoluteSize.Y
-			    local buttonWidth = TextButton.AbsoluteSize.X
-			    local buttonHeight = TextButton.AbsoluteSize.Y
-			
-			    local posX = math.clamp(TextButton.Position.X.Offset, 0, screenWidth - buttonWidth)
-			    local posY = math.clamp(TextButton.Position.Y.Offset, 0, screenHeight - buttonHeight)
-			
-			    TextButton.Position = UDim2.new(0, posX, 0, posY)
-			end
-			
-			ScreenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(adjustButtonPosition)
-			adjustButtonPosition()
-			
-			-- === Эмуляция LeftControl ===
-			local function pressLeftControl()
-			    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.LeftControl, false, nil)
-			    task.wait(0.05)
-			    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.LeftControl, false, nil)
-			end
-			
-			TextButton.MouseButton1Click:Connect(pressLeftControl)
-			
-			-- === Перетаскивание ===
-			local dragging = false
-			local dragInput, dragStart, startPos
-			
-			TextButton.InputBegan:Connect(function(input)
-			    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			        dragging = true
-			        dragStart = input.Position
-			        startPos = TextButton.Position
-			
-			        input.Changed:Connect(function()
-			            if input.UserInputState == Enum.UserInputState.End then
-			                dragging = false
-			                adjustButtonPosition()
-			            end
-			        end)
-			    end
-			end)
-			
-			TextButton.InputChanged:Connect(function(input)
-			    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-			        dragInput = input
-			    end
-			end)
-			
-			UIS.InputChanged:Connect(function(input)
-			    if input == dragInput and dragging then
-			        local delta = input.Position - dragStart
-			        TextButton.Position = UDim2.new(
-			            startPos.X.Scale,
-			            startPos.X.Offset + delta.X,
-			            startPos.Y.Scale,
-			            startPos.Y.Offset + delta.Y
-			        )
-			    end
-			end)
+		local Players = game:GetService("Players")
+		local UIS = game:GetService("UserInputService")
+		local VirtualInputManager = game:GetService("VirtualInputManager")
+		
+		local player = Players.LocalPlayer
+		local playerGui = player:WaitForChild("PlayerGui")
+		
+		-- === Создаём GUI ===
+		local ScreenGui = Instance.new("ScreenGui")
+		ScreenGui.Name = "PlutyHubButton"
+		ScreenGui.Parent = playerGui
+		ScreenGui.IgnoreGuiInset = true
+		ScreenGui.ResetOnSpawn = false
+		
+		-- === Кнопка ===
+		local TextButton = Instance.new("TextButton")
+		TextButton.Size = UDim2.new(0, 150, 0, 50)
+		TextButton.Position = UDim2.new(0.7, 0, 0.5, 0)
+		TextButton.AnchorPoint = Vector2.new(0.5, 0.5)
+		TextButton.BackgroundTransparency = 0.7 -- прозрачная
+		TextButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+		TextButton.BorderSizePixel = 3
+		TextButton.BorderColor3 = Color3.fromRGB(150, 0, 0)
+		TextButton.Text = ""
+		TextButton.Parent = ScreenGui
+		
+		-- === Градиент текста ===
+		local TextLabel = Instance.new("TextLabel")
+		TextLabel.Size = UDim2.new(1, 0, 1, 0)
+		TextLabel.BackgroundTransparency = 1
+		TextLabel.Text = "Pluty Hub"
+		TextLabel.TextScaled = false
+		TextLabel.Font = Enum.Font.GothamBold
+		TextLabel.TextSize = 18 -- поменьше шрифт
+		TextLabel.TextStrokeTransparency = 0.8
+		TextLabel.Parent = TextButton
+		
+		local UIGradient = Instance.new("UIGradient")
+		UIGradient.Color = ColorSequence.new{
+		    ColorSequenceKeypoint.new(0, Color3.fromRGB(150, 0, 0)),
+		    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 200))
+		}
+		UIGradient.Rotation = 0
+		UIGradient.Parent = TextLabel
+		
+		-- === Ограничение по экрану ===
+		local function adjustButtonPosition()
+		    local screenWidth = ScreenGui.AbsoluteSize.X
+		    local screenHeight = ScreenGui.AbsoluteSize.Y
+		    local buttonWidth = TextButton.AbsoluteSize.X
+		    local buttonHeight = TextButton.AbsoluteSize.Y
+		
+		    local posX = math.clamp(TextButton.Position.X.Offset, 0, screenWidth - buttonWidth)
+		    local posY = math.clamp(TextButton.Position.Y.Offset, 0, screenHeight - buttonHeight)
+		
+		    TextButton.Position = UDim2.new(0, posX, 0, posY)
+		end
+		
+		ScreenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(adjustButtonPosition)
+		adjustButtonPosition()
+		
+		-- === Эмуляция LeftControl через VirtualInputManager ===
+		TextButton.MouseButton1Click:Connect(function()
+		    -- Нажимаем LeftControl
+		    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.LeftControl, false, game)
+		    task.wait(0.05)
+		    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.LeftControl, false, game)
+		end)
+		
+		-- === Перетаскивание ===
+		local dragging = false
+		local dragInput, dragStart, startPos
+		
+		TextButton.InputBegan:Connect(function(input)
+		    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		        dragging = true
+		        dragStart = input.Position
+		        startPos = TextButton.Position
+		
+		        input.Changed:Connect(function()
+		            if input.UserInputState == Enum.UserInputState.End then
+		                dragging = false
+		                adjustButtonPosition()
+		            end
+		        end)
+		    end
+		end)
+		
+		TextButton.InputChanged:Connect(function(input)
+		    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		        dragInput = input
+		    end
+		end)
+		
+		UIS.InputChanged:Connect(function(input)
+		    if input == dragInput and dragging then
+		        local delta = input.Position - dragStart
+		        TextButton.Position = UDim2.new(
+		            startPos.X.Scale,
+		            startPos.X.Offset + delta.X,
+		            startPos.Y.Scale,
+		            startPos.Y.Offset + delta.Y
+		        )
+		    end
+		end)
 
 
 
