@@ -2976,7 +2976,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 
 
 			----Button
-												-- === КНОПКА SILENT AIM ДЛЯ МОБИЛКИ (С ТВОЕЙ КАРТИНКОЙ) ===
+												-- === КНОПКА SILENT AIM ДЛЯ МОБИЛКИ ===
 						local UIS = game:GetService("UserInputService")
 						local VirtualInputManager = game:GetService("VirtualInputManager")
 						local Players = game:GetService("Players")
@@ -2996,10 +2996,9 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 						local ImageButton = Instance.new("ImageButton")
 						ImageButton.Size = UDim2.new(0, 70, 0, 70)
 						ImageButton.AnchorPoint = Vector2.new(0.5, 0.5)
-						ImageButton.Position = UDim2.new(0.85, 0, 0.5, 0) -- 85% от ширины, центр по высоте
-						ImageButton.BackgroundTransparency = 1 -- прозрачный фон
-						ImageButton.Image = "rbxassetid://5456882482" -- твоя картинка
-						ImageButton.ImageColor3 = Color3.fromRGB(255, 255, 255)
+						ImageButton.Position = UDim2.new(0.85, 0, 0.5, 0) -- справа по центру
+						ImageButton.BackgroundTransparency = 1 -- полностью прозрачный фон
+						ImageButton.Image = "rbxassetid://5456882455" -- твоя картинка
 						ImageButton.Parent = ScreenGui
 						
 						-- === Функция нажатия клавиши ===
@@ -3009,7 +3008,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 						    VirtualInputManager:SendKeyEvent(false, keyCode, false, game)
 						end
 						
-						-- === Анимация клика (лёгкое уменьшение) ===
+						-- === Анимация клика ===
 						local function animateClick()
 						    local tweenDown = TweenService:Create(ImageButton, TweenInfo.new(0.08), {
 						        Size = UDim2.new(0, 64, 0, 64)
@@ -3084,9 +3083,3 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 						    ImageButton.Position = UDim2.new(0.85, 0, 0.5, 0)
 						end)
 						-- === /КНОПКА SILENT AIM ===
-
-
-
-
-
-
