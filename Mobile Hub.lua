@@ -2898,16 +2898,16 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 			ScreenGui.IgnoreGuiInset = true
 			ScreenGui.ResetOnSpawn = false
 			
-			-- === Кнопка с визуалом ===
+			-- === Основная кнопка ===
 			local ImageButton = Instance.new("ImageButton")
 			ImageButton.Size = UDim2.new(0, 150, 0, 50)
 			ImageButton.AnchorPoint = Vector2.new(0.5, 0.5)
 			ImageButton.Position = UDim2.new(0.7, 0, 0.5, 0)
-			ImageButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-			ImageButton.BackgroundTransparency = 0.7 -- прозрачная
+			ImageButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+			ImageButton.BackgroundTransparency = 0.3 -- фон серый, 30% прозрачность
 			ImageButton.BorderSizePixel = 3
-			ImageButton.BorderColor3 = Color3.fromRGB(150, 0, 0)
-			ImageButton.Image = "" -- можно вставить иконку
+			ImageButton.BorderColor3 = Color3.fromRGB(200, 0, 0) -- красная обводка
+			ImageButton.Image = ""
 			ImageButton.Parent = ScreenGui
 			
 			-- === Текст на кнопке с градиентом ===
@@ -2928,6 +2928,13 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 			UIGradient.Rotation = 0
 			UIGradient.Parent = TextLabel
 			
+			-- === Зона перетаскивания сверху ===
+			local DragFrame = Instance.new("Frame")
+			DragFrame.Size = UDim2.new(1, 0, 0, 15) -- небольшой прямоугольник сверху
+			DragFrame.Position = UDim2.new(0, 0, 0, -15) -- немного над кнопкой
+			DragFrame.BackgroundTransparency = 1
+			DragFrame.Parent = ImageButton
+			
 			-- === Ограничение, чтобы кнопка не вылезала за экран ===
 			local function adjustButtonPosition()
 			    local screenWidth = ScreenGui.AbsoluteSize.X
@@ -2937,14 +2944,13 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 			
 			    local posX = math.clamp(ImageButton.Position.X.Offset, 0, screenWidth - buttonWidth)
 			    local posY = math.clamp(ImageButton.Position.Y.Offset, 0, screenHeight - buttonHeight)
-			
 			    ImageButton.Position = UDim2.new(0, posX, 0, posY)
 			end
 			
 			ScreenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(adjustButtonPosition)
 			adjustButtonPosition()
 			
-			-- === Логика клика (имитация LeftControl) ===
+			-- === Клик по кнопке (LeftControl) ===
 			local function pressKey(keyCode)
 			    VirtualInputManager:SendKeyEvent(true, keyCode, false, game)
 			    task.wait(0.05)
@@ -2955,11 +2961,11 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 			    pressKey(Enum.KeyCode.LeftControl)
 			end)
 			
-			-- === Перетаскивание ===
+			-- === Перетаскивание только через DragFrame ===
 			local dragging = false
 			local dragInput, dragStart, startPos
 			
-			ImageButton.InputBegan:Connect(function(input)
+			DragFrame.InputBegan:Connect(function(input)
 			    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			        dragging = true
 			        dragStart = input.Position
@@ -2974,7 +2980,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 			    end
 			end)
 			
-			ImageButton.InputChanged:Connect(function(input)
+			DragFrame.InputChanged:Connect(function(input)
 			    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 			        dragInput = input
 			    end
@@ -2991,6 +2997,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 			        )
 			    end
 			end)
+
 
 
 
