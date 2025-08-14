@@ -2976,7 +2976,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 
 
 			----Button
-											-- === КНОПКА SILENT AIM ДЛЯ МОБИЛКИ ===
+										-- === КНОПКА SILENT AIM ДЛЯ МОБИЛКИ ===
 					local UIS = game:GetService("UserInputService")
 					local VirtualInputManager = game:GetService("VirtualInputManager")
 					local Players = game:GetService("Players")
@@ -2992,17 +2992,29 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 					ScreenGui.IgnoreGuiInset = true
 					ScreenGui.ResetOnSpawn = false
 					
-					-- === Надпись "Silent Aim" ===
-					local Label = Instance.new("TextLabel")
-					Label.Size = UDim2.new(0, 100, 0, 20)
-					Label.AnchorPoint = Vector2.new(0.5, 1)
-					Label.Position = UDim2.new(0.85, 0, 0.5, -50) -- чуть выше кнопки
-					Label.BackgroundTransparency = 1
-					Label.Text = "Silent Aim"
-					Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-					Label.TextScaled = true
-					Label.Font = Enum.Font.GothamBold
-					Label.Parent = ScreenGui
+					-- === Надпись с обводкой ===
+					local function createTextLabel(text, parent)
+					    local mainLabel = Instance.new("TextLabel")
+					    mainLabel.Size = UDim2.new(0, 100, 0, 20)
+					    mainLabel.AnchorPoint = Vector2.new(0.5, 1)
+					    mainLabel.BackgroundTransparency = 1
+					    mainLabel.Text = text
+					    mainLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+					    mainLabel.TextScaled = true
+					    mainLabel.Font = Enum.Font.GothamBold
+					    mainLabel.Parent = parent
+					
+					    -- Обводка (UIStroke)
+					    local stroke = Instance.new("UIStroke")
+					    stroke.Thickness = 2
+					    stroke.Color = Color3.fromRGB(0, 0, 0)
+					    stroke.Parent = mainLabel
+					
+					    return mainLabel
+					end
+					
+					local Label = createTextLabel("Silent Aim", ScreenGui)
+					Label.Position = UDim2.new(0.85, 0, 0.5, -50) -- над кнопкой
 					
 					-- === Кнопка ===
 					local ImageButton = Instance.new("ImageButton")
@@ -3010,7 +3022,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 					ImageButton.AnchorPoint = Vector2.new(0.5, 0.5)
 					ImageButton.Position = UDim2.new(0.85, 0, 0.5, 0) -- справа по центру
 					ImageButton.BackgroundTransparency = 1
-					ImageButton.Image = "rbxassetid://5484704814" -- новая картинка
+					ImageButton.Image = "rbxassetid://5484704830" -- твоя картинка
 					ImageButton.Parent = ScreenGui
 					
 					-- === Функция нажатия клавиши ===
@@ -3103,4 +3115,5 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/LenivayZopaKotaWork/P
 					    Label.Position = UDim2.new(0.85, 0, 0.5, -50)
 					end)
 					-- === /КНОПКА SILENT AIM ===
+					
 
