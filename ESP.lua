@@ -1,4 +1,4 @@
--- // Services
+	-- // Services
 		local ReplicatedStorage = game:GetService("ReplicatedStorage")
 		local Players = game:GetService("Players")
 		local RunService = game:GetService("RunService")
@@ -274,56 +274,3 @@
 			task.wait(0.5)
 		end
 		end)
-
-		-- // UI Integration
-		Tabs.VisualTab:Section({
-			Title = gradient("ESP", Color3.fromHex("#ff0000"), Color3.fromHex("#660000"))
-		})
-
-		Tabs.VisualTab:Toggle({
-			Title = "ESP Murderer",
-			Default = ESPConfig.HighlightMurderer,
-			Callback = function(state)
-				ESPConfig.HighlightMurderer = state
-			end
-		})
-
-		Tabs.VisualTab:Toggle({
-			Title = "ESP Sheriff",
-			Default = ESPConfig.HighlightSheriff,
-			Callback = function(state)
-				ESPConfig.HighlightSheriff = state
-			end
-		})
-
-		Tabs.VisualTab:Toggle({
-			Title = "ESP Innocent",
-			Default = ESPConfig.HighlightInnocent,
-			Callback = function(state)
-				ESPConfig.HighlightInnocent = state
-			end
-		})
-
-		Tabs.VisualTab:Toggle({
-			Title = "ESP Gun Drop",
-			Default = false,
-			Callback = function(value)
-				gunDropESPEnabled = value
-				scanGunDrops()
-			end
-		})
-
-		Tabs.VisualTab:Button({
-			Title = "Force Update ESP",
-			Callback = function()
-				for _, player in ipairs(Players:GetPlayers()) do
-					local h = player.Character and player.Character:FindFirstChild("Highlight")
-					if h then
-						h:Destroy()
-					end
-				end
-				-- Пересоздаём все подсветки
-				UpdateRoles()
-				UpdateHighlights()
-			end
-		})
